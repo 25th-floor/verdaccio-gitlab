@@ -182,6 +182,23 @@ describe('Gitlab Auth Plugin Unit Tests', () => {
     verdaccioGitlab.allow_publish(config.remoteUser, _package, cb);
   });
 
+  test('should allow publish of package based on group project', done => {
+    const verdaccioGitlab: VerdaccioGitlab = new VerdaccioGitlab(config.verdaccioGitlabConfig, config.options);
+    const _package: VerdaccioGitlabPackageAccess = {
+      name: '@myProject/xyz',
+      gitlab: true,
+      permit_project_scope: true
+    };
+
+    const cb: Callback = (err, data) => {
+      expect(err).toBeFalsy();
+      expect(data).toBe(true);
+      done();
+    };
+
+    verdaccioGitlab.allow_publish(config.remoteUser, _package, cb);
+  });
+
   test('should allow publish of package based on user name', done => {
     const verdaccioGitlab: VerdaccioGitlab = new VerdaccioGitlab(config.verdaccioGitlabConfig, config.options);
     const _package: VerdaccioGitlabPackageAccess = {

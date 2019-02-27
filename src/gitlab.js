@@ -28,7 +28,8 @@ export type VerdaccioGitlabConfig = {
 
 export type VerdaccioGitlabPackageAccess = PackageAccess & {
   name: string,
-  gitlab?: boolean
+  gitlab?: boolean,
+  permit_project_scope?: boolean
 }
 
 const ACCESS_LEVEL_MAPPING = {
@@ -171,17 +172,23 @@ export default class VerdaccioGitLab implements IPluginAuth {
 
   allow_publish(user: RemoteUser, _package: VerdaccioGitlabPackageAccess, cb: Callback) {
     if (!_package.gitlab) return cb(null, false);
-
     let packageScopePermit = false;
     let packagePermit = false;
     // Only allow to publish packages when:
     //  - the package has exactly the same name as one of the user groups, or
     //  - the package scope is the same as one of the user groups
+    //  - the package scope is the same as the project name from the user groups
+
     for (let real_group of user.real_groups) { // jscs:ignore requireCamelCaseOrUpperCaseIdentifiers
       this.logger.trace(`[gitlab] publish: checking group: ${real_group} for user: ${user.name || ''} and package: ${_package.name}`);
 
       if (this._matchGroupWithPackage(real_group, _package.name)) {
         packagePermit = true;
+        break;
+      }
+
+      if (_package.permit_project_scope && this._matchProjectWithPackageScope(real_group, _package.name)) {
+        packageScopePermit = true;
         break;
       }
     }
@@ -195,6 +202,22 @@ export default class VerdaccioGitLab implements IPluginAuth {
       const missingPerm = _package.name.indexOf('@') === 0 ? 'package-scope' : 'package-name';
       return cb(httperror[403](`must have required permissions: ${this.config.publish || ''} at ${missingPerm}`));
     }
+  }
+
+  _matchProjectWithPackageScope(real_group: string, package_name: string): boolean {
+    const split_real_group = real_group.split('/');
+    // assuming last entry is the project name
+    if(split_real_group.length < 2) {
+      return false
+    }
+    if (package_name.indexOf('@') === 0) {
+      const get_project_name = split_real_group[split_real_group.length -1];
+      const split_package_name = package_name.slice(1).split('/');
+      if(get_project_name === split_package_name[0]){
+        return true;
+      }
+    }
+    return false;
   }
 
   _matchGroupWithPackage(real_group: string, package_name: string): boolean {
