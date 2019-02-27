@@ -1,3 +1,5 @@
 {
-    "javascript.validate.enable": false
+    "javascript.validate.enable": false,
+    "standard.enable": false,
+    "tslint.enable": false
 }

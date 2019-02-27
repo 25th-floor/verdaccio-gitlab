@@ -1,3 +1,9 @@
+### 2.3.0 (2019-02-27)
+
+##### New Features
+
+*  possibility for publishing packages based on project name ([ec8a2200](https://github.com/bufferoverflow/verdaccio-gitlab/commit/ec8a22000d31f94b23da07f48f9a9e6d5ec3eb18))
+
 ### 2.2.0 (2018-12-07)
 
 ##### New Features
