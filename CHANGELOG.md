@@ -1,3 +1,13 @@
+### 2.4.0 (2019-03-22)
+
+##### New Features
+
+*  rename package for testing ([c21cb522](https://github.com/bufferoverflow/verdaccio-gitlab/commit/c21cb52277a89c3739e540a8eef1b171cbebf1d9))
+
+##### Tests
+
+*  add more debug logs for prod testing ([8f074725](https://github.com/bufferoverflow/verdaccio-gitlab/commit/8f074725f55218b7725b4f4522d8c4621f7309cf))
+
 ### 2.3.0 (2019-02-27)
 
 ##### New Features
