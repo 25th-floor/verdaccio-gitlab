@@ -171,6 +171,8 @@ export default class VerdaccioGitLab implements IPluginAuth {
   }
 
   allow_publish(user: RemoteUser, _package: VerdaccioGitlabPackageAccess, cb: Callback) {
+    this.logger.debug(`[gitlab] allow_publish _package: ${JSON.stringify(_package,null,4)}`);
+
     if (!_package.gitlab) return cb(null, false);
     let packageScopePermit = false;
     let packagePermit = false;
@@ -206,6 +208,8 @@ export default class VerdaccioGitLab implements IPluginAuth {
 
   _matchProjectWithPackageScope(real_group: string, package_name: string): boolean {
     const split_real_group = real_group.split('/');
+    this.logger.debug(`[gitlab] real_group: ${JSON.stringify(real_group,null,4)}`);
+
     // assuming last entry is the project name
     if(split_real_group.length < 2) {
       return false
@@ -213,9 +217,12 @@ export default class VerdaccioGitLab implements IPluginAuth {
     if (package_name.indexOf('@') === 0) {
       const get_project_name = split_real_group[split_real_group.length -1];
       const split_package_name = package_name.slice(1).split('/');
+      this.logger.debug(`[gitlab] get_project_name: ${get_project_name}`);
+
       if(get_project_name === split_package_name[0]){
         return true;
       }
+      this.logger.debug(`[gitlab] ${get_project_name} !== ${split_package_name[0]}`);
     }
     return false;
   }
